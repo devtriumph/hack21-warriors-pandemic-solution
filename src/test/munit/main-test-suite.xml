@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="main-test-suite.xml" />
+	<munit:test name="main-test-suite-pandemic-solutions-api-mainTest" doc:id="bd9e7b7d-d0fe-4925-9a7b-3878d9ec30c9" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="d8da4251-0d21-4fd1-acd0-bb83ebe20630" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\world:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="3748e4b8-0ead-4957-9b93-41c894cb2b69" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="WHO Disease API " attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0a6fc34b-6368-4f29-891b-3b236945aed7" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Covid-19_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="WHO Disease API " attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0a6fc34b-6368-4f29-891b-3b236945aed7" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Covid-19_API_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('worldDataResponse.json')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4c93bb97-1957-46be-852c-282d55b11bff" />
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="c7eb6c86-6275-4a58-bd7d-76cd38a63709" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="3e00f2de-52b0-4a71-a3ee-694bfe1cbe5b" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+
+<munit:test name="country-data-test-suite-pandemic-solutions-api" doc:id="dd5039f9-b546-47a7-9411-2c61ed4fab83" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="f995b094-2485-4bc0-bfd9-9ac668d700c2" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\countries\(country):pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="7cfbb0ff-e837-4e2d-bc1a-f07b440c7d49" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Covid-19_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="gov/{country}" attributeName="path" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('countryDataResponse.json')]" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		
+</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a6835cb5-5049-4af6-9f60-38523a002403" cloneOriginalEvent="true">
+				
+				<munit:variables >
+					<munit:variable key="country" value='"india"' mediaType="application/json" />
+					<munit:variable key="state" value='"kerala"' mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="81fa91aa-737b-481e-9c98-25f477e180fb" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="3bb36a6c-b9a3-4879-ab05-15ef0e142232" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="generate-otp-test-suite-pandemic-solutions-api" doc:id="0525c7fa-3b84-461e-968b-c2e93c8c9969" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="99b4441f-00c0-411b-838e-a1adf5895535" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\vaccine\certificate\generateOTP:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="10fb3bdc-12ff-4df8-95d3-f8a0b343c0fa" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="COWIN_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="/auth/public/generateOTP" attributeName="path" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('otpResponse.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="fe30653e-b477-4bc5-8699-ce979b5074be" />
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="e96d3783-757f-43f0-acfe-a8015ee8ed1c" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1bc29283-37c4-4839-9f19-6c1d715b0fc0" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="vaccine-center-test-suite-pandemic-solutions-api" doc:id="c8a83066-13c5-4289-833c-4a8264287fbd" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="a86d07b6-5965-4314-a150-abcbfd8668e9" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\vaccine\centers:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="3d718d46-4049-45f0-b840-1f58efe3ff99" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="COWIN_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="/appointment/sessions/public/findByPin" attributeName="path" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('vaccineCenterRes.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+
+</munit-tools:mock-when>
+		
+</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="76646686-3508-4b4a-b909-25d597dfad94" />
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="16efb9bb-6c1f-4f68-8a6f-f6d4e7c322de" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="e6a7342a-defb-4001-8310-6a7c4ecfccf3" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="certificate-test-suite-pandemic-solutions-api" doc:id="a0d8c618-f38b-47dd-a757-a883b9a1660a" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="bfbbfb43-c533-4d89-a1d6-29e71313a6ed" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\vaccine\certificate\download:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="1608145a-eada-4a7b-b40d-a4bb4e0c93bd" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="COWIN_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="/appointment/sessions/public/findByPin" attributeName="path" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('vaccineCenterRes.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a003bc7f-7d7c-4dee-9e63-3b24c4c96183" cloneOriginalEvent="true">
+				<munit:variables >
+					<munit:variable key="token" value='"b2617a356997493eadf04d0da6c8f7f9"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="a632897c-7be5-46e5-859f-1d0e84031d88" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d42f03a6-51bb-40ee-b3da-dc5987519891" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="certificate-default-test-suite-pandemic-solutions-api" doc:id="52a9be36-42dc-4eb2-943c-eb2130a8d6fa" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="a0326953-3ca1-45b4-9d7f-8dbd78f9a13f" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\vaccine\certificate\download:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="7d45601f-b73e-4079-a99b-45471ebb6ac2" />
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="7267a699-831a-46c2-ace2-f4ac358bfece" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f8d536d7-338e-4c73-87a9-75fe8ecf5b1a" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="validate-otp-test-suite-pandemic-solutions-api" doc:id="726b2381-695c-416c-8d35-53b9377790f1" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Kit Router" doc:id="3d91ca4f-0181-46b6-baba-ce1f03db2c7c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="pandemic-solutions-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="get:\covid-19\vaccine\certificate\generateOTP:pandemic-solutions-api-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock COWIIN API" doc:id="d455392c-5cfe-49a7-a51c-c89df6429206" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="COWIN Public API" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="COWIN_API_configuration" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="/auth/public/confirmOTP" attributeName="path" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('otpResponse.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ae1a37af-991d-4918-8e78-448d5ec01f87" />
+			<flow-ref doc:name="Flow-ref to pandemic-solutions-api-main" doc:id="86c5c9ff-7467-46ed-8f5f-528d23f041b7" name="pandemic-solutions-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="2bc230ac-a1fb-4534-9b33-16908f0c5add" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+</mule>

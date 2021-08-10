@@ -1,0 +1,15 @@
+
+{
+    "status": 500,
+    "errors": [
+        {
+            "errorType": "HTTP:INTERNAL_SERVER_ERROR",
+			 "errorCode": 500,
+            "errorMessage": "Bad Request",
+            "apiName": "Pandemic-solution-v1",
+            "description": "",
+            "moreInfo": "",
+            "transactionId": "abcd"
+        }
+    ]
+}
